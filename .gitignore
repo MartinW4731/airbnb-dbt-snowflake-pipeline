@@ -9,3 +9,14 @@ wheels/
 # Virtual environments
 .venv
 logs/
+
+# OS and editor files
+.DS_Store
+.vscode/
+
+# Credentials: never commit these
+profiles.yml
+*.p8
+*.pem
+*.key
+.env
