@@ -1,15 +1,10 @@
-Welcome to your new dbt project!
+# aws_dbt_snowflake_project
 
-### Using the starter project
+The dbt project for the Airbnb analytics pipeline. See the [repository README](../README.md) for the architecture, setup instructions and data tests.
 
-Try running the following commands:
-- dbt run
-- dbt test
-
-
-### Resources:
-- Learn more about dbt [in the docs](https://docs.getdbt.com/docs/introduction)
-- Check out [Discourse](https://discourse.getdbt.com/) for commonly asked questions and answers
-- Join the [chat](https://community.getdbt.com/) on Slack for live discussions and support
-- Find [dbt events](https://events.getdbt.com) near you
-- Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
+```bash
+uv run dbt debug      # verify the Snowflake connection
+uv run dbt run        # build models
+uv run dbt snapshot   # build SCD Type 2 dimensions
+uv run dbt test       # run data tests
+```
