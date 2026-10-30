@@ -14,24 +14,7 @@ An end-to-end ELT project that turns raw Airbnb booking, listing and host data i
 
 ## Architecture
 
-```
-Snowflake AIRBNB.STAGING (raw source tables)
-        |
-        v
-BRONZE  bronze_bookings, bronze_listings, bronze_hosts      (incremental)
-        |
-        v
-SILVER  silver_bookings, silver_listings, silver_hosts      (incremental upsert, cleaned and enriched)
-        |
-        v
-GOLD    obt                                                 (wide table, metadata-driven joins)
-        |-- ephemeral: bookings, listings, hosts            (column selection, no table created)
-        |       |
-        |       v
-        |   snapshots: dim_bookings, dim_listings, dim_hosts (SCD Type 2)
-        |
-        +-- fact                                            (fact table joined to current dimension rows)
-```
+![Architecture: AWS S3 to Snowflake to dbt bronze, silver and gold layers](docs/architecture.svg)
 
 | Layer | Models | Materialization | Purpose |
 | --- | --- | --- | --- |
@@ -46,6 +29,7 @@ GOLD    obt                                                 (wide table, metadat
 ```
 .
 ├── pyproject.toml / uv.lock        # Python dependencies (managed with uv)
+├── docs/architecture.svg           # Architecture diagram
 └── aws_dbt_snowflake_project/
     ├── dbt_project.yml             # Project config and per-layer defaults
     ├── macros/                     # multiply, tag, trimmer, generate_schema_name

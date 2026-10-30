@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1360 795" width="1360" height="795" font-family="DejaVu Sans, Verdana, Arial, sans-serif">
+  <title>Airbnb Analytics Pipeline architecture</title>
+  <desc>Data flows from AWS S3 through a Snowflake external stage into dbt bronze, silver and gold layers. The gold layer builds a wide table, ephemeral models, SCD Type 2 snapshots and a fact table.</desc>
+  <defs>
+    <marker id="arrow" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" fill="#243b5e"/>
+    </marker>
+  </defs>
+
+  <rect width="1360" height="795" fill="#f4f6fb"/>
+
+  <text x="44" y="68" font-size="40" font-weight="bold" fill="#243b5e">Airbnb Analytics Pipeline</text>
+  <text x="44" y="106" font-size="22" fill="#4a5a75">AWS S3  →  Snowflake  →  dbt (Bronze / Silver / Gold)  ·  5,000 bookings, 500 listings</text>
+
+  <!-- Row 1: main flow -->
+  <rect x="44" y="140" width="216" height="150" rx="20" fill="#e8a13a"/>
+  <text x="152" y="176" font-size="24" font-weight="bold" fill="#ffffff" text-anchor="middle">AWS S3</text>
+  <text x="152" y="210" font-size="16" fill="#ffffff" text-anchor="middle">bookings.csv</text>
+  <text x="152" y="236" font-size="16" fill="#ffffff" text-anchor="middle">listings.csv</text>
+  <text x="152" y="262" font-size="16" fill="#ffffff" text-anchor="middle">hosts.csv</text>
+
+  <rect x="309" y="140" width="216" height="150" rx="20" fill="#57b3e4"/>
+  <text x="417" y="176" font-size="24" font-weight="bold" fill="#ffffff" text-anchor="middle">Snowflake</text>
+  <text x="417" y="210" font-size="16" fill="#ffffff" text-anchor="middle">external stage</text>
+  <text x="417" y="236" font-size="16" fill="#ffffff" text-anchor="middle">COPY INTO</text>
+  <text x="417" y="262" font-size="16" fill="#ffffff" text-anchor="middle">AIRBNB.STAGING</text>
+
+  <rect x="574" y="140" width="216" height="150" rx="20" fill="#a96437"/>
+  <text x="682" y="176" font-size="24" font-weight="bold" fill="#ffffff" text-anchor="middle">Bronze</text>
+  <text x="682" y="210" font-size="16" fill="#ffffff" text-anchor="middle">incremental load</text>
+  <text x="682" y="236" font-size="16" fill="#ffffff" text-anchor="middle">(watermark)</text>
+  <text x="682" y="262" font-size="16" fill="#ffffff" text-anchor="middle">new rows only</text>
+
+  <rect x="839" y="140" width="216" height="150" rx="20" fill="#6c7380"/>
+  <text x="947" y="176" font-size="24" font-weight="bold" fill="#ffffff" text-anchor="middle">Silver</text>
+  <text x="947" y="210" font-size="16" fill="#ffffff" text-anchor="middle">clean + enrich</text>
+  <text x="947" y="236" font-size="16" fill="#ffffff" text-anchor="middle">MERGE upsert</text>
+  <text x="947" y="262" font-size="16" fill="#ffffff" text-anchor="middle">(unique key)</text>
+  <text x="947" y="316" font-size="13" fill="#2e7d4f" text-anchor="middle">✓ tests: amount &gt; 0 · rate 0–100</text>
+
+  <rect x="1104" y="140" width="216" height="150" rx="20" fill="#c9a03c"/>
+  <text x="1212" y="176" font-size="24" font-weight="bold" fill="#2b2b2b" text-anchor="middle">Gold</text>
+  <text x="1212" y="210" font-size="16" fill="#2b2b2b" text-anchor="middle">wide table + fact</text>
+  <text x="1212" y="236" font-size="16" fill="#2b2b2b" text-anchor="middle">SCD2 dimensions</text>
+  <text x="1212" y="262" font-size="16" fill="#2b2b2b" text-anchor="middle">(detail below)</text>
+
+  <line x1="262" y1="215" x2="305" y2="215" stroke="#243b5e" stroke-width="3" marker-end="url(#arrow)"/>
+  <line x1="527" y1="215" x2="570" y2="215" stroke="#243b5e" stroke-width="3" marker-end="url(#arrow)"/>
+  <line x1="792" y1="215" x2="835" y2="215" stroke="#243b5e" stroke-width="3" marker-end="url(#arrow)"/>
+  <line x1="1057" y1="215" x2="1100" y2="215" stroke="#243b5e" stroke-width="3" marker-end="url(#arrow)"/>
+  <line x1="1212" y1="294" x2="1212" y2="341" stroke="#243b5e" stroke-width="3" stroke-dasharray="6 5" marker-end="url(#arrow)"/>
+
+  <!-- Gold detail panel -->
+  <rect x="44" y="345" width="1276" height="250" rx="20" fill="#ffffff" stroke="#c6cfdf" stroke-width="2"/>
+  <text x="70" y="382" font-size="20" font-weight="bold" fill="#243b5e">Gold layer in detail</text>
+
+  <!-- fact reads obt directly -->
+  <path d="M205,440 L205,418 L1155,418 L1155,436" fill="none" stroke="#243b5e" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <rect x="470" y="406" width="440" height="24" fill="#ffffff"/>
+  <text x="690" y="424" font-size="14" fill="#4a5a75" text-anchor="middle">fact reads obt + current dimension rows</text>
+
+  <rect x="70" y="444" width="270" height="96" rx="16" fill="#c9a03c"/>
+  <text x="205" y="476" font-size="20" font-weight="bold" fill="#2b2b2b" text-anchor="middle">obt</text>
+  <text x="205" y="504" font-size="15" fill="#2b2b2b" text-anchor="middle">wide table</text>
+  <text x="205" y="526" font-size="15" fill="#2b2b2b" text-anchor="middle">metadata-driven joins</text>
+
+  <rect x="387" y="444" width="270" height="96" rx="16" fill="#f6ecc9" stroke="#c9a03c" stroke-width="2" stroke-dasharray="7 5"/>
+  <text x="522" y="476" font-size="20" font-weight="bold" fill="#2b2b2b" text-anchor="middle">Ephemeral models</text>
+  <text x="522" y="504" font-size="15" fill="#2b2b2b" text-anchor="middle">bookings · listings · hosts</text>
+  <text x="522" y="526" font-size="15" fill="#2b2b2b" text-anchor="middle">column selection, no table</text>
+
+  <rect x="703" y="444" width="270" height="96" rx="16" fill="#a9792a"/>
+  <text x="838" y="476" font-size="20" font-weight="bold" fill="#ffffff" text-anchor="middle">Snapshots (SCD2)</text>
+  <text x="838" y="504" font-size="15" fill="#ffffff" text-anchor="middle">dim_bookings · dim_listings</text>
+  <text x="838" y="526" font-size="15" fill="#ffffff" text-anchor="middle">dim_hosts</text>
+
+  <rect x="1020" y="444" width="270" height="96" rx="16" fill="#c9a03c"/>
+  <text x="1155" y="476" font-size="20" font-weight="bold" fill="#2b2b2b" text-anchor="middle">fact</text>
+  <text x="1155" y="504" font-size="15" fill="#2b2b2b" text-anchor="middle">keys + measures</text>
+  <text x="1155" y="526" font-size="15" fill="#2b2b2b" text-anchor="middle">joins current dim rows</text>
+
+  <line x1="342" y1="492" x2="383" y2="492" stroke="#243b5e" stroke-width="3" marker-end="url(#arrow)"/>
+  <line x1="659" y1="492" x2="699" y2="492" stroke="#243b5e" stroke-width="3" marker-end="url(#arrow)"/>
+  <line x1="975" y1="492" x2="1016" y2="492" stroke="#243b5e" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <text x="205" y="574" font-size="13" fill="#2e7d4f" text-anchor="middle">✓ test: row count = silver_bookings</text>
+  <text x="838" y="574" font-size="13" fill="#2e7d4f" text-anchor="middle">✓ test: 1 current row per key</text>
+  <text x="1155" y="574" font-size="13" fill="#2e7d4f" text-anchor="middle">✓ test: booking_id unique</text>
+  <text x="522" y="574" font-size="13" fill="#4a5a75" text-anchor="middle">feeds the snapshots</text>
+
+  <!-- Run order -->
+  <rect x="44" y="615" width="1276" height="104" rx="20" fill="#ffffff" stroke="#c6cfdf" stroke-width="2"/>
+  <text x="70" y="651" font-size="20" font-weight="bold" fill="#243b5e">Run order</text>
+  <text x="200" y="651" font-size="14" fill="#4a5a75">fact reads the snapshot tables, so snapshots must be built before it</text>
+
+  <g font-family="DejaVu Sans Mono, Menlo, Consolas, monospace" font-size="15" fill="#243b5e" text-anchor="middle">
+    <rect x="70" y="669" width="290" height="36" rx="10" fill="#eef2f9" stroke="#c6cfdf"/>
+    <text x="215" y="693">1. dbt run --exclude fact</text>
+    <rect x="380" y="669" width="290" height="36" rx="10" fill="#eef2f9" stroke="#c6cfdf"/>
+    <text x="525" y="693">2. dbt snapshot</text>
+    <rect x="690" y="669" width="290" height="36" rx="10" fill="#eef2f9" stroke="#c6cfdf"/>
+    <text x="835" y="693">3. dbt run --select fact</text>
+    <rect x="1000" y="669" width="290" height="36" rx="10" fill="#eef2f9" stroke="#c6cfdf"/>
+    <text x="1145" y="693">4. dbt test</text>
+  </g>
+
+  <text x="44" y="765" font-size="20" font-weight="bold" fill="#243b5e">dbt  ·  Snowflake  ·  AWS S3  ·  SQL  ·  Jinja</text>
+</svg>
